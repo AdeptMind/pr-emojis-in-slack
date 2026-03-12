@@ -2,4 +2,4 @@ name: 'PR Emojis in Slack'
 description: 'Add emoji reactions on Slack messages based on PR review status'
 runs:
   using: 'docker'
-  image: 'Dockerfile'
+  image: 'docker://ghcr.io/adeptmind/pr-emojis-in-slack:latest'
