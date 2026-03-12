@@ -47,7 +47,7 @@ jobs:
 
 | Variable | Required | Default | Description |
 |----------|----------|---------|-------------|
-| `GH_TOKEN` | Yes | | GitHub token for `gh` CLI and API access |
+| `GH_TOKEN` | Yes | | GitHub token for API access (reading PR details and reviews) |
 | `SLACK_BOT_TOKEN` | Yes | | Slack Bot User OAuth Token (`xoxb-...`) |
 | `SLACK_CHANNEL_ID` | Yes | | Slack channel to monitor |
 | `SLACK_BOT_USER_ID` | Yes | | Slack bot user ID |
