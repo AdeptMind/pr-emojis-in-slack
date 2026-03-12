@@ -99,6 +99,7 @@ func testConfig() *config.Config {
 		SlackChannelID:            "C1234",
 		BotUserID:                 "U1234",
 		NumberOfApprovalsRequired: 1,
+		EmojiMonitoring:          "test_monitoring",
 		EmojiReviewStarted:       "test_review_started",
 		EmojiApproved:            "test_approved",
 		EmojiNeedsChange:         "test_needs_change",
@@ -148,7 +149,7 @@ func TestApproval(t *testing.T) {
 	if err != nil {
 		t.Fatalf("unexpected error: %v", err)
 	}
-	assertEmojis(t, sb.emojis, []string{"test_review_started", "test_approved"})
+	assertEmojis(t, sb.emojis, []string{"test_monitoring", "test_review_started", "test_approved"})
 }
 
 func TestChangesRequested(t *testing.T) {
@@ -166,7 +167,7 @@ func TestChangesRequested(t *testing.T) {
 	if err != nil {
 		t.Fatalf("unexpected error: %v", err)
 	}
-	assertEmojis(t, sb.emojis, []string{"test_review_started", "test_needs_change"})
+	assertEmojis(t, sb.emojis, []string{"test_monitoring", "test_review_started", "test_needs_change"})
 }
 
 func TestCommented(t *testing.T) {
@@ -184,16 +185,17 @@ func TestCommented(t *testing.T) {
 	if err != nil {
 		t.Fatalf("unexpected error: %v", err)
 	}
-	assertEmojis(t, sb.emojis, []string{"test_review_started", "test_commented"})
+	assertEmojis(t, sb.emojis, []string{"test_monitoring", "test_review_started", "test_commented"})
 }
 
 func TestApprovedFromChangesRequested(t *testing.T) {
 	sb := &mockSlackBackend{
 		messages: []slack.Message{slackMsg()},
 		reactions: []slack.Reaction{
+			{Emoji: "test_monitoring", UserIDs: []string{"U1234"}},
 			{Emoji: "test_needs_change", UserIDs: []string{"U1234"}},
 		},
-		emojis: []string{"test_needs_change"},
+		emojis: []string{"test_monitoring", "test_needs_change"},
 	}
 	gb := &mockGithubBackend{
 		event: mockEvent,
@@ -208,16 +210,17 @@ func TestApprovedFromChangesRequested(t *testing.T) {
 	if err != nil {
 		t.Fatalf("unexpected error: %v", err)
 	}
-	assertEmojis(t, sb.emojis, []string{"test_review_started", "test_approved"})
+	assertEmojis(t, sb.emojis, []string{"test_monitoring", "test_review_started", "test_approved"})
 }
 
 func TestApprovedFromCommented(t *testing.T) {
 	sb := &mockSlackBackend{
 		messages: []slack.Message{slackMsg()},
 		reactions: []slack.Reaction{
+			{Emoji: "test_monitoring", UserIDs: []string{"U1234"}},
 			{Emoji: "test_commented", UserIDs: []string{"U1234"}},
 		},
-		emojis: []string{"test_commented"},
+		emojis: []string{"test_monitoring", "test_commented"},
 	}
 	gb := &mockGithubBackend{
 		event: mockEvent,
@@ -232,7 +235,7 @@ func TestApprovedFromCommented(t *testing.T) {
 	if err != nil {
 		t.Fatalf("unexpected error: %v", err)
 	}
-	assertEmojis(t, sb.emojis, []string{"test_review_started", "test_approved"})
+	assertEmojis(t, sb.emojis, []string{"test_monitoring", "test_review_started", "test_approved"})
 }
 
 func TestCommentedIgnoredWhenChangesRequested(t *testing.T) {
@@ -253,7 +256,7 @@ func TestCommentedIgnoredWhenChangesRequested(t *testing.T) {
 	if err != nil {
 		t.Fatalf("unexpected error: %v", err)
 	}
-	assertEmojis(t, sb.emojis, []string{"test_review_started", "test_needs_change"})
+	assertEmojis(t, sb.emojis, []string{"test_monitoring", "test_review_started", "test_needs_change"})
 }
 
 func TestApprovedIgnoredWhenChangesRequested(t *testing.T) {
@@ -274,7 +277,7 @@ func TestApprovedIgnoredWhenChangesRequested(t *testing.T) {
 	if err != nil {
 		t.Fatalf("unexpected error: %v", err)
 	}
-	assertEmojis(t, sb.emojis, []string{"test_review_started", "test_needs_change"})
+	assertEmojis(t, sb.emojis, []string{"test_monitoring", "test_review_started", "test_needs_change"})
 }
 
 func TestNoMessageFound(t *testing.T) {
@@ -301,10 +304,11 @@ func TestMergedPR(t *testing.T) {
 	sb := &mockSlackBackend{
 		messages: []slack.Message{slackMsg()},
 		reactions: []slack.Reaction{
+			{Emoji: "test_monitoring", UserIDs: []string{"U1234"}},
 			{Emoji: "test_review_started", UserIDs: []string{"U1234"}},
 			{Emoji: "test_approved", UserIDs: []string{"U1234"}},
 		},
-		emojis: []string{"test_review_started", "test_approved"},
+		emojis: []string{"test_monitoring", "test_review_started", "test_approved"},
 	}
 	gb := &mockGithubBackend{
 		event:   mockEvent,
@@ -316,17 +320,18 @@ func TestMergedPR(t *testing.T) {
 	if err != nil {
 		t.Fatalf("unexpected error: %v", err)
 	}
-	assertEmojis(t, sb.emojis, []string{"test_review_started", "test_approved", "test_merged"})
+	assertEmojis(t, sb.emojis, []string{"test_monitoring", "test_review_started", "test_approved", "test_merged"})
 }
 
 func TestClosedPR(t *testing.T) {
 	sb := &mockSlackBackend{
 		messages: []slack.Message{slackMsg()},
 		reactions: []slack.Reaction{
+			{Emoji: "test_monitoring", UserIDs: []string{"U1234"}},
 			{Emoji: "test_review_started", UserIDs: []string{"U1234"}},
 			{Emoji: "test_approved", UserIDs: []string{"U1234"}},
 		},
-		emojis: []string{"test_review_started", "test_approved"},
+		emojis: []string{"test_monitoring", "test_review_started", "test_approved"},
 	}
 	gb := &mockGithubBackend{
 		event:   mockEvent,
@@ -338,7 +343,73 @@ func TestClosedPR(t *testing.T) {
 	if err != nil {
 		t.Fatalf("unexpected error: %v", err)
 	}
-	assertEmojis(t, sb.emojis, []string{"test_review_started", "test_approved", "test_closed"})
+	assertEmojis(t, sb.emojis, []string{"test_monitoring", "test_review_started", "test_approved", "test_closed"})
+}
+
+func TestNoReviews(t *testing.T) {
+	sb := &mockSlackBackend{
+		messages: []slack.Message{slackMsg()},
+		emojis:   []string{},
+	}
+	gb := &mockGithubBackend{
+		event:   mockEvent,
+		pr:      openPR(),
+		reviews: []github.Review{},
+	}
+
+	err := Run(testConfig(), github.NewClient(gb), slack.NewClient(sb))
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+	assertEmojis(t, sb.emojis, []string{"test_monitoring"})
+}
+
+func TestIssueCommentEvent(t *testing.T) {
+	event := map[string]interface{}{
+		"issue": map[string]interface{}{
+			"number": float64(42),
+			"pull_request": map[string]interface{}{
+				"html_url": "https://github.com/example/repo/pull/42",
+			},
+		},
+	}
+	sb := &mockSlackBackend{
+		messages: []slack.Message{slackMsg()},
+		emojis:   []string{},
+	}
+	gb := &mockGithubBackend{
+		event:   event,
+		pr:      openPR(),
+		reviews: []github.Review{{State: "approved", Username: "alice"}},
+	}
+
+	err := Run(testConfig(), github.NewClient(gb), slack.NewClient(sb))
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+	assertEmojis(t, sb.emojis, []string{"test_monitoring", "test_review_started", "test_approved"})
+}
+
+func TestIssueCommentNotPR(t *testing.T) {
+	event := map[string]interface{}{
+		"issue": map[string]interface{}{
+			"number": float64(10),
+		},
+	}
+	sb := &mockSlackBackend{
+		emojis: []string{},
+	}
+	gb := &mockGithubBackend{
+		event:   event,
+		pr:      openPR(),
+		reviews: []github.Review{},
+	}
+
+	err := Run(testConfig(), github.NewClient(gb), slack.NewClient(sb))
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+	assertEmojis(t, sb.emojis, []string{})
 }
 
 func TestForkPR(t *testing.T) {

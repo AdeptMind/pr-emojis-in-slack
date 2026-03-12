@@ -19,7 +19,9 @@ on:
   pull_request_review:
     types: [submitted]
   pull_request:
-    types: [closed]
+    types: [opened, synchronize, closed]
+  issue_comment:
+    types: [created]
 
 permissions:
   contents: read
@@ -49,6 +51,7 @@ jobs:
 | `SLACK_BOT_TOKEN` | Yes | | Slack Bot User OAuth Token (`xoxb-...`) |
 | `SLACK_CHANNEL_ID` | Yes | | Slack channel to monitor |
 | `SLACK_BOT_USER_ID` | Yes | | Slack bot user ID |
+| `EMOJI_MONITORING` | No | `sparkles` | Emoji added when PR is being monitored |
 | `EMOJI_REVIEW_STARTED` | No | `eyes` | Emoji for review started |
 | `EMOJI_APPROVED` | No | `white_check_mark` | Emoji for approval |
 | `EMOJI_CHANGES_REQUESTED` | No | `warning` | Emoji for changes requested |
