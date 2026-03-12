@@ -20,8 +20,3 @@ jobs:
           SLACK_CHANNEL_ID: C06P2KX149M
           SLACK_API_TOKEN: ${{ secrets.SLACK_TOKEN }}
           BOT_USER_ID: UTMS06TPX
-          EMOJI_REVIEW_STARTED: "review_started"
-          EMOJI_APPROVED: "approved"
-          EMOJI_CHANGES_REQUESTED: "changes_requested"
-          EMOJI_MERGED: "merged"
-          EMOJI_CLOSED: "closed"

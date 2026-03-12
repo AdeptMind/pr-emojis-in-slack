@@ -71,12 +71,12 @@ func LoadFromEnv() (Config, error) {
 
 		NumberOfApprovalsRequired: approvals,
 
-		EmojiReviewStarted: envOrDefault("EMOJI_REVIEW_STARTED", "review_started"),
-		EmojiApproved:      envOrDefault("EMOJI_APPROVED", "approved"),
-		EmojiNeedsChange:   envOrDefault("EMOJI_CHANGES_REQUESTED", "changes_requested"),
-		EmojiMerged:        envOrDefault("EMOJI_MERGED", "merged"),
-		EmojiClosed:        envOrDefault("EMOJI_CLOSED", "closed"),
-		EmojiCommented:     envOrDefault("EMOJI_COMMENTED", "comment"),
+		EmojiReviewStarted: envOrDefault("EMOJI_REVIEW_STARTED", "eyes"),
+		EmojiApproved:      envOrDefault("EMOJI_APPROVED", "white_check_mark"),
+		EmojiNeedsChange:   envOrDefault("EMOJI_CHANGES_REQUESTED", "warning"),
+		EmojiMerged:        envOrDefault("EMOJI_MERGED", "rocket"),
+		EmojiClosed:        envOrDefault("EMOJI_CLOSED", "no_entry_sign"),
+		EmojiCommented:     envOrDefault("EMOJI_COMMENTED", "speech_balloon"),
 	}
 
 	return cfg, nil

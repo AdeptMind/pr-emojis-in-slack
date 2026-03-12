@@ -42,10 +42,10 @@ jobs:
 | `SLACK_API_TOKEN` | Yes | | Slack bot OAuth token |
 | `SLACK_CHANNEL_ID` | Yes | | Slack channel to monitor |
 | `BOT_USER_ID` | Yes | | Slack bot user ID |
-| `EMOJI_REVIEW_STARTED` | No | `review_started` | Emoji for review started |
-| `EMOJI_APPROVED` | No | `approved` | Emoji for approval |
-| `EMOJI_CHANGES_REQUESTED` | No | `changes_requested` | Emoji for changes requested |
-| `EMOJI_COMMENTED` | No | `comment` | Emoji for comments |
-| `EMOJI_MERGED` | No | `merged` | Emoji for merged PR |
-| `EMOJI_CLOSED` | No | `closed` | Emoji for closed PR |
+| `EMOJI_REVIEW_STARTED` | No | `eyes` | Emoji for review started |
+| `EMOJI_APPROVED` | No | `white_check_mark` | Emoji for approval |
+| `EMOJI_CHANGES_REQUESTED` | No | `warning` | Emoji for changes requested |
+| `EMOJI_COMMENTED` | No | `speech_balloon` | Emoji for comments |
+| `EMOJI_MERGED` | No | `rocket` | Emoji for merged PR |
+| `EMOJI_CLOSED` | No | `no_entry_sign` | Emoji for closed PR |
 | `NUMBER_OF_APPROVALS_REQUIRED` | No | `1` | Approvals needed for approved emoji |
