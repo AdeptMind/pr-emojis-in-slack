@@ -14,17 +14,14 @@ jobs:
   pr-emojis:
     runs-on: ubuntu-latest
     steps:
-      - name: Download binary
+      - name: Run pr-emojis-in-slack
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          gh release download latest --pattern 'pr-emojis-in-slack' --repo "$GITHUB_REPOSITORY"
-          chmod +x pr-emojis-in-slack
-
-      - name: Run pr-emojis-in-slack
-        run: ./pr-emojis-in-slack
-        env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SLACK_CHANNEL_ID: ${{ vars.SLACK_CHANNEL_ID }}
           SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
           SLACK_BOT_USER_ID: ${{ vars.SLACK_BOT_USER_ID }}
+        run: |
+          gh release download latest --pattern 'pr-emojis-in-slack' --repo "$GITHUB_REPOSITORY"
+          chmod +x pr-emojis-in-slack
+          ./pr-emojis-in-slack
