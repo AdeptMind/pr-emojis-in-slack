@@ -1,0 +1,102 @@
+{
+  "project": "pr-emojis-in-slack",
+  "branchName": "001-slapr-go-rewrite",
+  "userStories": [
+    {
+      "id": "T-001",
+      "title": "Project scaffolding, .gitignore, go.mod, shared types",
+      "priority": 1,
+      "round": 1,
+      "passes": true,
+      "acceptanceCriteria": [
+        ".gitignore exists and includes /slapr/ directory",
+        "go.mod exists with module github.com/AdeptMind/pr-emojis-in-slack",
+        "Directory structure: cmd/pr-emojis-in-slack/, internal/github/, internal/slack/, internal/emoji/, internal/config/",
+        "Shared types defined: Review, PullRequest, Message, Reaction in appropriate packages",
+        "Config struct with all fields, loads from PEIS_ prefixed env vars",
+        "Code compiles with go build ./..."
+      ],
+      "dependsOn": []
+    },
+    {
+      "id": "T-002",
+      "title": "GitHub client - read event, get PR, get reviews",
+      "priority": 2,
+      "round": 2,
+      "passes": false,
+      "acceptanceCriteria": [
+        "WebGithubBackend implementation using net/http and GitHub REST API",
+        "ReadEvent reads and parses JSON from GITHUB_EVENT_PATH file",
+        "GetPR returns PullRequest with state, merged, mergeable_state fields",
+        "GetPRReviews returns list of Review with state (lowercased) and username",
+        "Unit tests with mock backend covering all methods",
+        "Tests pass with go test ./internal/github/..."
+      ],
+      "dependsOn": ["T-001"]
+    },
+    {
+      "id": "T-003",
+      "title": "Slack client - find message, get/add/remove reactions",
+      "priority": 2,
+      "round": 2,
+      "passes": false,
+      "acceptanceCriteria": [
+        "WebSlackBackend implementation using net/http and Slack Web API",
+        "FindTimestamp searches messages for PR URL pattern matching <URL> format",
+        "GetEmojisForUser filters reactions by user ID",
+        "AddReaction handles already_reacted error gracefully (log warning, don't fail)",
+        "Unit tests with mock backend covering all methods including edge cases",
+        "Tests pass with go test ./internal/slack/..."
+      ],
+      "dependsOn": ["T-001"]
+    },
+    {
+      "id": "T-004",
+      "title": "Emoji logic - GetForReviews and Diff",
+      "priority": 2,
+      "round": 2,
+      "passes": false,
+      "acceptanceCriteria": [
+        "GetForReviews groups reviews by author, takes last review per author, returns appropriate emoji",
+        "Priority order: changes_requested > approved (with count check) > commented > empty",
+        "Diff computes emojis to add and remove given new set and existing set",
+        "Unit tests covering: single approval, changes requested, commented, multi-reviewer scenarios, approval count threshold",
+        "Tests pass with go test ./internal/emoji/..."
+      ],
+      "dependsOn": ["T-001"]
+    },
+    {
+      "id": "T-005",
+      "title": "Main orchestration and entry point",
+      "priority": 3,
+      "round": 3,
+      "passes": false,
+      "acceptanceCriteria": [
+        "cmd/pr-emojis-in-slack/main.go wires config, github client, slack client, and runs orchestration",
+        "Run function implements same logic as Python main(): read event, check fork, get PR/reviews, find slack message, compute emoji diff, apply changes",
+        "Fork PRs are skipped with log message",
+        "Missing slack message is handled gracefully with log message",
+        "Emojis are added in review-step order (same ordering as Python version)",
+        "Integration test using mock backends verifies full flow end-to-end",
+        "Binary builds and runs: go build -o pr-emojis-in-slack ./cmd/pr-emojis-in-slack"
+      ],
+      "dependsOn": ["T-002", "T-003", "T-004"]
+    },
+    {
+      "id": "T-006",
+      "title": "Dockerfile, action.yml, and CI workflows",
+      "priority": 4,
+      "round": 4,
+      "passes": false,
+      "acceptanceCriteria": [
+        "Multi-stage Dockerfile: stage 1 builds static binary with CGO_DISABLED=1, stage 2 copies to scratch or distroless",
+        "Final image contains only the binary and CA certificates",
+        "action.yml defines the GitHub Action with docker run using the built image",
+        ".github/workflows/test.yml runs go test on push/PR",
+        ".github/workflows/pr-emojis.yml triggers on pull_request_review and pull_request closed events with correct env vars",
+        "docker build completes successfully"
+      ],
+      "dependsOn": ["T-005"]
+    }
+  ]
+}

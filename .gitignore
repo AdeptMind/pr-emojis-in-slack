@@ -1,0 +1,14 @@
+# Python reference implementation
+/slapr/
+
+# Go binary (at repo root only)
+/pr-emojis-in-slack
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# OS
+.DS_Store
