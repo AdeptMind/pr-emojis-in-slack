@@ -23,7 +23,7 @@
       "title": "GitHub client - read event, get PR, get reviews",
       "priority": 2,
       "round": 2,
-      "passes": false,
+      "passes": true,
       "acceptanceCriteria": [
         "WebGithubBackend implementation using net/http and GitHub REST API",
         "ReadEvent reads and parses JSON from GITHUB_EVENT_PATH file",
@@ -39,7 +39,7 @@
       "title": "Slack client - find message, get/add/remove reactions",
       "priority": 2,
       "round": 2,
-      "passes": false,
+      "passes": true,
       "acceptanceCriteria": [
         "WebSlackBackend implementation using net/http and Slack Web API",
         "FindTimestamp searches messages for PR URL pattern matching <URL> format",
@@ -55,7 +55,7 @@
       "title": "Emoji logic - GetForReviews and Diff",
       "priority": 2,
       "round": 2,
-      "passes": false,
+      "passes": true,
       "acceptanceCriteria": [
         "GetForReviews groups reviews by author, takes last review per author, returns appropriate emoji",
         "Priority order: changes_requested > approved (with count check) > commented > empty",
@@ -70,7 +70,7 @@
       "title": "Main orchestration and entry point",
       "priority": 3,
       "round": 3,
-      "passes": false,
+      "passes": true,
       "acceptanceCriteria": [
         "cmd/pr-emojis-in-slack/main.go wires config, github client, slack client, and runs orchestration",
         "Run function implements same logic as Python main(): read event, check fork, get PR/reviews, find slack message, compute emoji diff, apply changes",
@@ -87,7 +87,7 @@
       "title": "Dockerfile, action.yml, and CI workflows",
       "priority": 4,
       "round": 4,
-      "passes": false,
+      "passes": true,
       "acceptanceCriteria": [
         "Multi-stage Dockerfile: stage 1 builds static binary with CGO_DISABLED=1, stage 2 copies to scratch or distroless",
         "Final image contains only the binary and CA certificates",
