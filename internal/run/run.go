@@ -36,34 +36,67 @@ func Run(cfg *config.Config, gh *github.Client, sl *slack.Client) error {
 		return fmt.Errorf("extracting PR number: %w", err)
 	}
 
-	pr, err := gh.GetPR(prNumber)
-	if err != nil {
-		return fmt.Errorf("getting PR: %w", err)
-	}
-
-	reviews, err := gh.GetPRReviews(prNumber)
-	if err != nil {
-		return fmt.Errorf("getting PR reviews: %w", err)
-	}
-
-	reviewEmoji := emoji.GetForReviews(
-		reviews,
-		cfg.EmojiCommented,
-		cfg.EmojiNeedsChange,
-		cfg.EmojiApproved,
-		cfg.NumberOfApprovalsRequired,
-	)
-
 	prURL, err := extractString(event, "pull_request", "html_url")
 	if err != nil {
 		return fmt.Errorf("extracting PR URL: %w", err)
 	}
 	fmt.Printf("Event PR: %s\n", prURL)
 
-	timestamp, err := sl.FindTimestampOfReviewRequestedMessage(prURL, cfg.SlackChannelID)
-	if err != nil {
-		return fmt.Errorf("finding slack message: %w", err)
+	// Fetch PR details, reviews, and Slack message timestamp in parallel.
+	type prResult struct {
+		pr  github.PullRequest
+		err error
 	}
+	type reviewsResult struct {
+		reviews []github.Review
+		err     error
+	}
+	type tsResult struct {
+		timestamp string
+		err       error
+	}
+
+	prCh := make(chan prResult, 1)
+	reviewsCh := make(chan reviewsResult, 1)
+	tsCh := make(chan tsResult, 1)
+
+	go func() {
+		pr, err := gh.GetPR(prNumber)
+		prCh <- prResult{pr, err}
+	}()
+	go func() {
+		reviews, err := gh.GetPRReviews(prNumber)
+		reviewsCh <- reviewsResult{reviews, err}
+	}()
+	go func() {
+		ts, err := sl.FindTimestampOfReviewRequestedMessage(prURL, cfg.SlackChannelID)
+		tsCh <- tsResult{ts, err}
+	}()
+
+	prRes := <-prCh
+	if prRes.err != nil {
+		return fmt.Errorf("getting PR: %w", prRes.err)
+	}
+	pr := prRes.pr
+
+	reviewsRes := <-reviewsCh
+	if reviewsRes.err != nil {
+		return fmt.Errorf("getting PR reviews: %w", reviewsRes.err)
+	}
+
+	reviewEmoji := emoji.GetForReviews(
+		reviewsRes.reviews,
+		cfg.EmojiCommented,
+		cfg.EmojiNeedsChange,
+		cfg.EmojiApproved,
+		cfg.NumberOfApprovalsRequired,
+	)
+
+	tsRes := <-tsCh
+	if tsRes.err != nil {
+		return fmt.Errorf("finding slack message: %w", tsRes.err)
+	}
+	timestamp := tsRes.timestamp
 	fmt.Printf("Slack message timestamp: %s\n", timestamp)
 
 	if timestamp == "" {
