@@ -55,3 +55,4 @@ jobs:
 | `EMOJI_MERGED` | No | `rocket` | Emoji for merged PR |
 | `EMOJI_CLOSED` | No | `no_entry_sign` | Emoji for closed PR |
 | `NUMBER_OF_APPROVALS_REQUIRED` | No | `1` | Approvals needed for approved emoji |
+
