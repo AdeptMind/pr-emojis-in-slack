@@ -9,7 +9,8 @@ A GitHub Action that adds emoji reactions to Slack messages when PRs are reviewe
 1. Create a Slack app Oauth Bot Token scopes: `reactions:read`, `reactions:write`, `channels:history`, `groups:history`
 2. Install the app to your workspace and note the **Bot User ID** and **OAuth Token**
 3. Add the Bot User OAuth Token (`xoxb-...`) as a repository secret named `SLACK_BOT_TOKEN`
-4. Create `.github/workflows/pr-emojis.yml`:
+4. Add `SLACK_CHANNEL_ID` and `SLACK_BOT_USER_ID` as repository variables (Settings > Secrets and variables > Actions > Variables)
+5. Create `.github/workflows/pr-emojis.yml`:
 
 ```yaml
 name: PR Emojis in Slack
@@ -20,20 +21,25 @@ on:
   pull_request:
     types: [closed]
 
-permissions: {}
+permissions:
+  contents: read
+  pull-requests: read
 
 jobs:
   pr-emojis:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-
-      - uses: AdeptMind/pr-emojis-in-slack@main
+      - name: Run pr-emojis-in-slack
         env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          SLACK_CHANNEL_ID: "<your-channel-id>"
-          SLACK_BOT_TOKEN: ${{ secrets.SLACK_TOKEN }}
-          SLACK_BOT_USER_ID: "<your-bot-user-id>"
+          SLACK_CHANNEL_ID: ${{ vars.SLACK_CHANNEL_ID }}
+          SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
+          SLACK_BOT_USER_ID: ${{ vars.SLACK_BOT_USER_ID }}
+        run: |
+          gh release download latest --pattern 'pr-emojis-in-slack' --repo AdeptMind/pr-emojis-in-slack
+          chmod +x pr-emojis-in-slack
+          ./pr-emojis-in-slack
 ```
 
 ## Environment Variables
