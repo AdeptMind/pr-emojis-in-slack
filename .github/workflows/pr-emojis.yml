@@ -1,0 +1,27 @@
+name: PR Emojis in Slack
+
+on:
+  pull_request_review:
+    types: [submitted]
+  pull_request:
+    types: [closed]
+
+permissions: {}
+
+jobs:
+  pr-emojis:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: ./
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SLACK_CHANNEL_ID: C06P2KX149M
+          SLACK_API_TOKEN: ${{ secrets.SLACK_TOKEN }}
+          PEIS_BOT_USER_ID: UTMS06TPX
+          PEIS_EMOJI_REVIEW_STARTED: "review_started"
+          PEIS_EMOJI_APPROVED: "approved"
+          PEIS_EMOJI_CHANGES_REQUESTED: "changes_requested"
+          PEIS_EMOJI_MERGED: "merged"
+          PEIS_EMOJI_CLOSED: "closed"
