@@ -21,6 +21,10 @@ jobs:
           SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
           SLACK_BOT_USER_ID: ${{ vars.SLACK_BOT_USER_ID }}
         run: |
-          gh release download latest --pattern 'pr-emojis-in-slack' --repo "$GITHUB_REPOSITORY"
+          curl -sL -H "Authorization: token $GH_TOKEN" -H "Accept: application/octet-stream" \
+            "$(curl -sL -H "Authorization: token $GH_TOKEN" \
+              https://api.github.com/repos/AdeptMind/pr-emojis-in-slack/releases/tags/latest \
+              | jq -r '.assets[] | select(.name=="pr-emojis-in-slack") | .url')" \
+            -o pr-emojis-in-slack
           chmod +x pr-emojis-in-slack
           ./pr-emojis-in-slack
