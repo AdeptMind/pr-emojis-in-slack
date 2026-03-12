@@ -34,14 +34,16 @@ func (c *Client) FindTimestampOfReviewRequestedMessage(prURL, channelID string) 
 	}
 
 	for _, msg := range messages {
-		match := prURLPattern.FindStringSubmatch(msg.Text)
-		if match == nil {
-			continue
-		}
-
-		url := match[1]
-		if strings.HasPrefix(url, prURL) {
-			return msg.Timestamp, nil
+		matches := prURLPattern.FindAllStringSubmatch(msg.Text, -1)
+		for _, match := range matches {
+			// Slack formats links as <url> or <url|label> — strip the label.
+			url := match[1]
+			if i := strings.Index(url, "|"); i >= 0 {
+				url = url[:i]
+			}
+			if strings.HasPrefix(url, prURL) {
+				return msg.Timestamp, nil
+			}
 		}
 	}
 
