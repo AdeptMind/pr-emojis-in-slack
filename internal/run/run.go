@@ -20,25 +20,44 @@ func Run(cfg *config.Config, gh *github.Client, sl *slack.Client) error {
 		return fmt.Errorf("reading github event: %w", err)
 	}
 
-	// Check if PR is from a fork.
-	isFork, err := extractBool(event, "pull_request", "head", "repo", "fork")
-	if err != nil {
-		return fmt.Errorf("extracting fork status: %w", err)
-	}
-	if isFork {
-		fmt.Println("Fork PRs are not supported.")
-		return nil
-	}
+	// Determine if this is a pull_request or issue_comment event.
+	var prNumber int
+	var prURL string
 
-	// Get PR number and details.
-	prNumber, err := extractInt(event, "pull_request", "number")
-	if err != nil {
-		return fmt.Errorf("extracting PR number: %w", err)
-	}
-
-	prURL, err := extractString(event, "pull_request", "html_url")
-	if err != nil {
-		return fmt.Errorf("extracting PR URL: %w", err)
+	if _, ok := event["pull_request"]; ok {
+		// pull_request or pull_request_review event.
+		isFork, err := extractBool(event, "pull_request", "head", "repo", "fork")
+		if err != nil {
+			return fmt.Errorf("extracting fork status: %w", err)
+		}
+		if isFork {
+			fmt.Println("Fork PRs are not supported.")
+			return nil
+		}
+		prNumber, err = extractInt(event, "pull_request", "number")
+		if err != nil {
+			return fmt.Errorf("extracting PR number: %w", err)
+		}
+		prURL, err = extractString(event, "pull_request", "html_url")
+		if err != nil {
+			return fmt.Errorf("extracting PR URL: %w", err)
+		}
+	} else if _, ok := event["issue"]; ok {
+		// issue_comment event — skip if not a PR.
+		if _, err := navigate(event, []string{"issue", "pull_request"}); err != nil {
+			fmt.Println("Not a pull request comment, skipping.")
+			return nil
+		}
+		prNumber, err = extractInt(event, "issue", "number")
+		if err != nil {
+			return fmt.Errorf("extracting issue number: %w", err)
+		}
+		prURL, err = extractString(event, "issue", "pull_request", "html_url")
+		if err != nil {
+			return fmt.Errorf("extracting PR URL from issue: %w", err)
+		}
+	} else {
+		return fmt.Errorf("unrecognized event payload")
 	}
 	fmt.Printf("Event PR: %s\n", prURL)
 
@@ -112,9 +131,10 @@ func Run(cfg *config.Config, gh *github.Client, sl *slack.Client) error {
 
 	// Build the desired emoji set.
 	newEmojis := map[string]struct{}{
-		cfg.EmojiReviewStarted: {},
+		cfg.EmojiMonitoring: {},
 	}
 	if reviewEmoji != "" {
+		newEmojis[cfg.EmojiReviewStarted] = struct{}{}
 		newEmojis[reviewEmoji] = struct{}{}
 	}
 

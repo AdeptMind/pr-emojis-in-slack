@@ -4,7 +4,9 @@ on:
   pull_request_review:
     types: [submitted]
   pull_request:
-    types: [closed]
+    types: [opened, synchronize, closed]
+  issue_comment:
+    types: [created]
 
 permissions:
   contents: read

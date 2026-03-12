@@ -13,6 +13,7 @@ type Config struct {
 
 	NumberOfApprovalsRequired int
 
+	EmojiMonitoring    string
 	EmojiReviewStarted string
 	EmojiApproved      string
 	EmojiNeedsChange   string
@@ -31,6 +32,7 @@ type Config struct {
 // typical review lifecycle order.
 func (c *Config) EmojisByReviewStep(emoji string) int {
 	order := []string{
+		c.EmojiMonitoring,
 		c.EmojiReviewStarted,
 		c.EmojiCommented,
 		c.EmojiNeedsChange,
@@ -71,6 +73,7 @@ func LoadFromEnv() (Config, error) {
 
 		NumberOfApprovalsRequired: approvals,
 
+		EmojiMonitoring:    envOrDefault("EMOJI_MONITORING", "sparkles"),
 		EmojiReviewStarted: envOrDefault("EMOJI_REVIEW_STARTED", "eyes"),
 		EmojiApproved:      envOrDefault("EMOJI_APPROVED", "white_check_mark"),
 		EmojiNeedsChange:   envOrDefault("EMOJI_CHANGES_REQUESTED", "warning"),
