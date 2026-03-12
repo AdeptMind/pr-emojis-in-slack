@@ -5,7 +5,7 @@ import (
 	"strings"
 )
 
-var prURLPattern = regexp.MustCompile(`<(?P<url>[^>]+)>`)
+var prURLPattern = regexp.MustCompile(`<(https://github\.com/[^/]+/[^/]+/pull/\d+[^>]*)>`)
 
 // Backend defines the interface for Slack data access.
 type Backend interface {
