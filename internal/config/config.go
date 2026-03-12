@@ -49,10 +49,10 @@ func (c *Config) EmojisByReviewStep(emoji string) int {
 // LoadFromEnv reads configuration from environment variables.
 func LoadFromEnv() (Config, error) {
 	approvals := 1
-	if v := os.Getenv("PEIS_NUMBER_OF_APPROVALS_REQUIRED"); v != "" {
+	if v := os.Getenv("NUMBER_OF_APPROVALS_REQUIRED"); v != "" {
 		n, err := strconv.Atoi(v)
 		if err != nil {
-			return Config{}, fmt.Errorf("invalid PEIS_NUMBER_OF_APPROVALS_REQUIRED: %w", err)
+			return Config{}, fmt.Errorf("invalid NUMBER_OF_APPROVALS_REQUIRED: %w", err)
 		}
 		if n < 1 {
 			n = 1
@@ -67,16 +67,16 @@ func LoadFromEnv() (Config, error) {
 		GithubRepo:      os.Getenv("GITHUB_REPOSITORY"),
 
 		SlackChannelID: os.Getenv("SLACK_CHANNEL_ID"),
-		BotUserID:      os.Getenv("PEIS_BOT_USER_ID"),
+		BotUserID:      os.Getenv("BOT_USER_ID"),
 
 		NumberOfApprovalsRequired: approvals,
 
-		EmojiReviewStarted: envOrDefault("PEIS_EMOJI_REVIEW_STARTED", "review_started"),
-		EmojiApproved:      envOrDefault("PEIS_EMOJI_APPROVED", "approved"),
-		EmojiNeedsChange:   envOrDefault("PEIS_EMOJI_CHANGES_REQUESTED", "changes_requested"),
-		EmojiMerged:        envOrDefault("PEIS_EMOJI_MERGED", "merged"),
-		EmojiClosed:        envOrDefault("PEIS_EMOJI_CLOSED", "closed"),
-		EmojiCommented:     envOrDefault("PEIS_EMOJI_COMMENTED", "comment"),
+		EmojiReviewStarted: envOrDefault("EMOJI_REVIEW_STARTED", "review_started"),
+		EmojiApproved:      envOrDefault("EMOJI_APPROVED", "approved"),
+		EmojiNeedsChange:   envOrDefault("EMOJI_CHANGES_REQUESTED", "changes_requested"),
+		EmojiMerged:        envOrDefault("EMOJI_MERGED", "merged"),
+		EmojiClosed:        envOrDefault("EMOJI_CLOSED", "closed"),
+		EmojiCommented:     envOrDefault("EMOJI_COMMENTED", "comment"),
 	}
 
 	return cfg, nil
