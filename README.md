@@ -2,8 +2,6 @@
 
 A GitHub Action that adds emoji reactions to Slack messages when PRs are reviewed, approved, merged, or closed.
 
-> Rewritten in Go for fast GitHub Action execution.
-
 ## Setup
 
 1. Create a Slack app Oauth Bot Token scopes: `reactions:read`, `reactions:write`, `channels:history`, `groups:history`
@@ -29,11 +27,12 @@ jobs:
     steps:
       - name: Run pr-emojis-in-slack
         env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SLACK_CHANNEL_ID: ${{ vars.SLACK_CHANNEL_ID }}
           SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
           SLACK_BOT_USER_ID: ${{ vars.SLACK_BOT_USER_ID }}
         run: |
-          gh release download latest --pattern 'pr-emojis-in-slack' --repo AdeptMind/pr-emojis-in-slack
+          curl -fsSL https://github.com/AdeptMind/pr-emojis-in-slack/releases/download/latest/pr-emojis-in-slack -o pr-emojis-in-slack
           chmod +x pr-emojis-in-slack
           ./pr-emojis-in-slack
 ```
@@ -54,4 +53,3 @@ jobs:
 | `EMOJI_MERGED` | No | `rocket` | Emoji for merged PR |
 | `EMOJI_CLOSED` | No | `no_entry_sign` | Emoji for closed PR |
 | `NUMBER_OF_APPROVALS_REQUIRED` | No | `1` | Approvals needed for approved emoji |
-
