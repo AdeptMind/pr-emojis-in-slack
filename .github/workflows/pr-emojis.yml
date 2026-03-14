@@ -8,17 +8,12 @@ on:
   issue_comment:
     types: [created]
 
-permissions:
-  contents: read
-  pull-requests: read
-
 jobs:
   pr-emojis:
     runs-on: ubuntu-latest
     steps:
       - name: Run pr-emojis-in-slack
         env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SLACK_CHANNEL_ID: ${{ vars.SLACK_CHANNEL_ID }}
           SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
           SLACK_BOT_USER_ID: ${{ vars.SLACK_BOT_USER_ID }}
