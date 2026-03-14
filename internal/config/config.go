@@ -64,7 +64,7 @@ func LoadFromEnv() (Config, error) {
 
 	cfg := Config{
 		SlackAPIToken:   os.Getenv("SLACK_BOT_TOKEN"),
-		GithubToken:     os.Getenv("GH_TOKEN"),
+		GithubToken:     os.Getenv("GITHUB_TOKEN"),
 		GithubEventPath: os.Getenv("GITHUB_EVENT_PATH"),
 		GithubRepo:      os.Getenv("GITHUB_REPOSITORY"),
 
