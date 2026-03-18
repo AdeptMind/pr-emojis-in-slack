@@ -37,6 +37,7 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
+          git fetch origin main
           git checkout main
           sed -i "s|/download/v[^/]*/|/download/${{ github.ref_name }}/|g" README.md
           git add README.md
