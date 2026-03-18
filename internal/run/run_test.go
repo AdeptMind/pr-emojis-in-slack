@@ -323,6 +323,30 @@ func TestMergedPR(t *testing.T) {
 	assertEmojis(t, sb.emojis, []string{"test_monitoring", "test_review_started", "test_approved", "test_merged"})
 }
 
+func TestMergedPREmojiOrder(t *testing.T) {
+	// Verify that even with existing emojis in wrong order, re-add produces correct order.
+	sb := &mockSlackBackend{
+		messages: []slack.Message{slackMsg()},
+		reactions: []slack.Reaction{
+			{Emoji: "test_approved", UserIDs: []string{"U1234"}},
+			{Emoji: "test_monitoring", UserIDs: []string{"U1234"}},
+			{Emoji: "test_review_started", UserIDs: []string{"U1234"}},
+		},
+		emojis: []string{"test_approved", "test_monitoring", "test_review_started"},
+	}
+	gb := &mockGithubBackend{
+		event:   mockEvent,
+		pr:      github.PullRequest{State: "closed", Merged: true, MergeableState: "clean"},
+		reviews: []github.Review{{State: "approved", Username: "alice"}},
+	}
+
+	err := Run(testConfig(), github.NewClient(gb), slack.NewClient(sb))
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+	assertEmojis(t, sb.emojis, []string{"test_monitoring", "test_review_started", "test_approved", "test_merged"})
+}
+
 func TestClosedPR(t *testing.T) {
 	sb := &mockSlackBackend{
 		messages: []slack.Message{slackMsg()},

@@ -147,27 +147,25 @@ func Run(cfg *config.Config, gh *github.Client, sl *slack.Client) error {
 		newEmojis[cfg.EmojiClosed] = struct{}{}
 	}
 
-	// Compute diff.
-	toAdd, toRemove := emoji.Diff(newEmojis, existingEmojis)
-
-	// Sort emojis to add by review step order.
-	sortedToAdd := setToSlice(toAdd)
-	sort.Slice(sortedToAdd, func(i, j int) bool {
-		return cfg.EmojisByReviewStep(sortedToAdd[i]) < cfg.EmojisByReviewStep(sortedToAdd[j])
+	// Sort desired emojis by review step order.
+	sortedNew := setToSlice(newEmojis)
+	sort.Slice(sortedNew, func(i, j int) bool {
+		return cfg.EmojisByReviewStep(sortedNew[i]) < cfg.EmojisByReviewStep(sortedNew[j])
 	})
 
-	fmt.Printf("Emojis to add (ordered) : %s\n", strings.Join(sortedToAdd, ", "))
-	fmt.Printf("Emojis to remove        : %s\n", joinSet(toRemove))
+	fmt.Printf("Desired emojis (ordered): %s\n", strings.Join(sortedNew, ", "))
 
-	for _, e := range sortedToAdd {
-		if err := sl.AddReaction(timestamp, e, cfg.SlackChannelID); err != nil {
-			return fmt.Errorf("adding reaction %s: %w", e, err)
+	// Remove all existing emojis, then re-add in sorted order so Slack
+	// displays them in the correct review-lifecycle sequence.
+	for e := range existingEmojis {
+		if err := sl.RemoveReaction(timestamp, e, cfg.SlackChannelID); err != nil {
+			return fmt.Errorf("removing reaction %s: %w", e, err)
 		}
 	}
 
-	for e := range toRemove {
-		if err := sl.RemoveReaction(timestamp, e, cfg.SlackChannelID); err != nil {
-			return fmt.Errorf("removing reaction %s: %w", e, err)
+	for _, e := range sortedNew {
+		if err := sl.AddReaction(timestamp, e, cfg.SlackChannelID); err != nil {
+			return fmt.Errorf("adding reaction %s: %w", e, err)
 		}
 	}
 
