@@ -1,5 +1,7 @@
 # pr-emojis-in-slack
 
+[![Tests](https://github.com/AdeptMind/pr-emojis-in-slack/actions/workflows/test.yml/badge.svg)](https://github.com/AdeptMind/pr-emojis-in-slack/actions/workflows/test.yml) [![Release](https://img.shields.io/github/v/release/AdeptMind/pr-emojis-in-slack)](https://github.com/AdeptMind/pr-emojis-in-slack/releases/latest) [![Go](https://img.shields.io/badge/Go-1.20-blue?logo=go)](https://go.dev/) [![License](https://img.shields.io/github/license/AdeptMind/pr-emojis-in-slack)](https://github.com/AdeptMind/pr-emojis-in-slack/blob/main/LICENSE)
+
 A GitHub Action that adds emoji reactions to Slack messages when PRs are reviewed, approved, merged, or closed.
 
 ## Setup
