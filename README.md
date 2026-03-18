@@ -32,12 +32,12 @@ jobs:
           SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
           SLACK_BOT_USER_ID: ${{ vars.SLACK_BOT_USER_ID }}
         run: |
-          curl -fsSL https://github.com/AdeptMind/pr-emojis-in-slack/releases/download/v1.0.0/pr-emojis-in-slack -o pr-emojis-in-slack
+          curl -fsSL https://github.com/AdeptMind/pr-emojis-in-slack/releases/download/v1.0.1/pr-emojis-in-slack -o pr-emojis-in-slack
           chmod +x pr-emojis-in-slack
           ./pr-emojis-in-slack
 ```
 
-> **Pinning a version**: Replace `v1.0.0` in the URL above with the desired
+> **Pinning a version**: Replace `v1.0.1` in the URL above with the desired
 > [release tag](https://github.com/AdeptMind/pr-emojis-in-slack/releases).
 > Using `latest` is also supported but may introduce breaking changes.
 
