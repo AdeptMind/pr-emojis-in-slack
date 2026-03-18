@@ -37,10 +37,6 @@ jobs:
           ./pr-emojis-in-slack
 ```
 
-> **Pinning a version**: Replace `v1.0.1` in the URL above with the desired
-> [release tag](https://github.com/AdeptMind/pr-emojis-in-slack/releases).
-> Using `latest` is also supported but may introduce breaking changes.
-
 ## Environment Variables
 
 | Variable | Required | Default | Description |
