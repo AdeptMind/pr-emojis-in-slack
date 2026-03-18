@@ -32,7 +32,7 @@ jobs:
           SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
           SLACK_BOT_USER_ID: ${{ vars.SLACK_BOT_USER_ID }}
         run: |
-          curl -fsSL https://github.com/AdeptMind/pr-emojis-in-slack/releases/download/v1.0.2/pr-emojis-in-slack -o pr-emojis-in-slack
+          curl -fsSL https://github.com/AdeptMind/pr-emojis-in-slack/releases/download/v1.1.0/pr-emojis-in-slack -o pr-emojis-in-slack
           chmod +x pr-emojis-in-slack
           ./pr-emojis-in-slack
 ```
